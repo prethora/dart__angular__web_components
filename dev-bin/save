@@ -1,0 +1,58 @@
+#!/bin/bash
+
+CURRENT_SCRIPT_DIR_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+PROJECT_DIR_PATH="$(cd "$CURRENT_SCRIPT_DIR_PATH/.." && pwd)"
+source "$CURRENT_SCRIPT_DIR_PATH/lib/save.bash"
+source "$CURRENT_SCRIPT_DIR_PATH/lib/commons.bash"
+source "$CURRENT_SCRIPT_DIR_PATH/lib/git.bash"
+cd "$PROJECT_DIR_PATH"
+
+_processHelp "$@"
+
+FORCE=0
+YES=0
+MESSAGE="$(date +'%Y-%m-%d-%H-%M')"
+_loadArgs "$@"
+
+if isSaveable; then
+    SAVE_VERB="save"
+    [[ "$FORCE" == 1 ]] && SAVE_VERB="force save"
+    if [[ "$YES" == 1 ]] || confirm "Are you sure you want to $SAVE_VERB branch '$(getCurrentBranch)'?"; then
+        [[ "$YES" != 1 ]] && echo ""
+        
+        printAction "git add -A"
+        git add -A
+        [[ "$?" != 0 ]] && echo "fatal: \`git add\` exited with code $?" && exit 1
+        
+        printAction "git commit -m \"...\""
+        git commit -m "$MESSAGE"; ERR="$?"; echo ""
+        [[ "$ERR" != 0 ]] && echo "fatal: \`git commit\` exited with code $?" && exit 1
+        
+        BRANCH="HEAD"
+        [[ "$FORCE" == 1 ]] && BRANCH="+HEAD"
+        
+        printAction "git push -u origin $BRANCH"
+        git push -u origin "$BRANCH"; ERR="$?"; echo ""
+        if [[ "$ERR" != 0 ]]; then
+            if [[ "$FORCE" != 1 ]]; then
+                if confirm "The push failed, do you want to try to force push?"; then
+                    echo ""
+                    BRANCH="+HEAD"
+                    printAction "git push -u origin $BRANCH"
+                    git push -u origin "$BRANCH";
+                    ERR="$?"
+                    echo ""
+                    if [[ "$ERR" != 0 ]]; then
+                        echo "fatal: \`git push\` exited with code $?"
+                        exit 1
+                    fi
+                fi
+            else
+                echo "fatal: \`git push\` exited with code $?"
+                exit 1
+            fi
+        fi
+    fi
+else
+    echo "nothing to save"
+fi

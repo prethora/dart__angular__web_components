@@ -1,0 +1,23 @@
+include: package:pedantic/analysis_options.1.9.0.yaml
+
+analyzer:
+  exclude: [build/**]
+  errors:
+    uri_has_not_been_generated: ignore
+  plugins:
+    - angular
+
+# Lint rules and documentation, see http://dart-lang.github.io/linter/lints
+linter:
+  rules:
+    cancel_subscriptions: true
+    hash_and_equals: true
+    iterable_contains_unrelated_type: true
+    list_remove_unrelated_type: true
+    test_types_in_equals: true
+    unnecessary_const: true
+    unnecessary_new: true
+    unrelated_type_equality_checks: true
+    valid_regexps: true
+    prefer_single_quotes: false
+

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+CURRENT_SCRIPT_DIR_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+PROJECT_DIR_PATH="$(cd "$CURRENT_SCRIPT_DIR_PATH/.." && pwd)"
+source "$CURRENT_SCRIPT_DIR_PATH/lib/pub.bash"
+source "$CURRENT_SCRIPT_DIR_PATH/lib/project.bash"
+source "$CURRENT_SCRIPT_DIR_PATH/lib/commons.bash"
+source "$CURRENT_SCRIPT_DIR_PATH/lib/git.bash"
+cd "$PROJECT_DIR_PATH"
+
+COMMAND=""
+YES=0
+COUNT=1
+TAG=""
+
+_processHelp "$@"
+_loadArgs "$@"
+
+if [[ "$COMMAND" == "publish" ]]; then
+    _publish
+elif [[ "$COMMAND" == "list" ]]; then    
+    _list
+elif [[ "$COMMAND" == "activate" ]]; then
+    _activate
+fi

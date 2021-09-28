@@ -1,0 +1,54 @@
+#!/bin/bash
+
+CURRENT_SCRIPT_DIR_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+PROJECT_DIR_PATH="$(cd "$CURRENT_SCRIPT_DIR_PATH/.." && pwd)"
+source "$CURRENT_SCRIPT_DIR_PATH/lib/setup.bash"
+source "$CURRENT_SCRIPT_DIR_PATH/lib/commons.bash"
+source "$CURRENT_SCRIPT_DIR_PATH/lib/git.bash"
+source "$CURRENT_SCRIPT_DIR_PATH/lib/menu.bash"
+cd "$PROJECT_DIR_PATH"
+
+PUBSPEC_PATH="./pubspec.yaml"
+WEB_MAIN_PATH="./web/main.dart"
+TEST_APP_TEST_PATH="./test/app_test.dart"
+WEB_INDEX_PATH="./web/index.html"
+
+_processHelp "$@"
+
+YES=0
+ALL_REPOS=0
+_loadArgs "$@"
+
+if [[ "$ALL_REPOS" == 1 ]]; then
+    REPO_ADDRESSES=( $(getRepoAddresses) )
+else
+    REPO_ADDRESSES=( $(getRepoAddresses ".dart.angular") )
+fi
+
+HAS_AT_LEAST_ONE_REPO_ADDRESS=0
+[[ "${#REPO_ADDRESSES[@]}" -gt 0 ]] && HAS_AT_LEAST_ONE_REPO_ADDRESS=1
+
+NAME=""
+DESCRIPTION=""
+TITLE=""
+REPO_ADDRESS=""
+REPO_EXISTS=0
+
+
+if ! _isCustomizable; then
+    echo "error: at least some template tags not found, this project is not customizable"
+    exit 1 
+fi
+
+_readName
+_readDescription
+_readTitle
+
+if [[ "$HAS_AT_LEAST_ONE_REPO_ADDRESS" == 1 ]]; then
+    _readRepoAddress
+fi
+
+_replaceTags
+_manageRepo1
+_pubGet
+_manageRepo2

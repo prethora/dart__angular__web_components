@@ -1,0 +1,9 @@
+# Files and directories created by pub
+.dart_tool
+.packages
+.pub/
+build/
+# Directory created by dartdoc
+doc/api/
+# See https://github.com/dart-lang/site-webdev/issues/1351
+test/**/*.g.dart

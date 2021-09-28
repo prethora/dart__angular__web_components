@@ -1,0 +1,12 @@
+{
+  "files.exclude": {
+    ".vscode/": true,
+    ".gitignore": true,
+    "pubspec.lock": true,
+    ".dart_tool": true,
+    ".packages": true,
+    "dev-bin": true,
+    "analysis_options.yaml": true,
+    "LICENSE": true
+  }
+}

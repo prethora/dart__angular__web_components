@@ -1,0 +1,3 @@
+#!/bin/bash
+
+webdev serve --hostname 0.0.0.0 --auto restart
